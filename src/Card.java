@@ -8,7 +8,9 @@ public class Card {
         this.rank = rank;
         this.value = value;
     }
-
+    public String getRank() {
+        return rank;
+    }
     public int getValue() {
         return value;
     }

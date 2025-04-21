@@ -21,7 +21,7 @@ public class Game {
                 if (user[i].getId().equals(inputId)) {
                     if (user[i].getPw().equals(inputPw)) {
                         flag = true;
-                        selectGame();
+                        selectGame(user[i]);
                     }
                 }
             }
@@ -32,13 +32,13 @@ public class Game {
 
     }
 
-    public void selectGame() {
+    public void selectGame(User login) {
         while (true) {
             System.out.print("(1)블랙잭,(2)홀덤 (3)미정: ");
             int select = input.nextInt();
             switch (select) {
                 case 1:
-                    BlackJack game = new BlackJack();
+                    BlackJack game = new BlackJack(login);
                     game.start();
                     break;
                 case 2:
