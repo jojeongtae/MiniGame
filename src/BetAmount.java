@@ -5,14 +5,14 @@ public class BetAmount {
      this.user = user;
      this.deck = deck;
     }
-    public void doubleDown(){
-
+    public int doubleDown(int userMoney , int dealerMoney){
+    return this.user.setUserMoney(user.getUserMoney()*2);
     }
-    public void split(){
-
+    public int split(int userMoney ,int dealerMoney){
+    return this.user.setUserMoney(userMoney + dealerMoney);
     }
-    public void blackjack(){
-
-    }
+//    public int blackjack(int userMoney){
+//
+//    }
 
 }

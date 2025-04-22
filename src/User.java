@@ -33,7 +33,8 @@ public class User {
     public void setWinUserMoney(int userMoney) {
         this.userMoney = userMoney *2;
     }
-    public void setUserMoney(int userMoney) {
+    public int setUserMoney(int userMoney) {
         this.userMoney = userMoney;
+        return userMoney;
     }
 }
