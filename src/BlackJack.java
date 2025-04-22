@@ -14,74 +14,86 @@ public class BlackJack {
     public void start(){
         while(true) {
             System.out.println("블랙잭 게임을 시작 하겠습니다.");
-            System.out.println("판돈은 판당 1만원 입니다.");
-            user.setUserMoney(user.getUserMoney()-10000);
-            deck = new Deck();
-            playerCard = new ArrayList<>();
-            dealerCard = new ArrayList<>();
-            for (int i = 0; i < 2; i++) {
-                playerCard.add(deck.drawCard());
-                dealerCard.add(deck.drawCard());
-            }
-            System.out.println("내 카드 : " + myHand(playerCard));
-            System.out.println("딜러 카드 : " + dealerCard.get(0) + " ???");
-            checkAce(playerCard);
-            while (true) {
-                System.out.println("1.힛(H) 2.더블 다운(D) 3.스테이(Enter)");
-                String yn = input.nextLine();
-                if (yn.toUpperCase().equals("H")) {
+            System.out.print("판돈을 입력해주세요 : ");
+            int stake = input.nextInt();
+            input.nextLine();
+            if (stake > user.getUserMoney()){
+                System.out.println("판돈이 모자랍니다.");
+                continue;
+            }else {
+                user.setUserMoney(user.getUserMoney() - stake);
+                deck = new Deck();
+                playerCard = new ArrayList<>();
+                dealerCard = new ArrayList<>();
+                for (int i = 0; i < 2; i++) {
                     playerCard.add(deck.drawCard());
-                    checkAce(playerCard);
-                    System.out.println("내 카드 : " + myHand(playerCard));
-                    int total = totalHand(playerCard);
-                    if (total > 21) {
-                        user.setLoseUserMoney(user.getUserMoney());
-                        System.out.println("버스트! 당신의 패배");
+                    dealerCard.add(deck.drawCard());
+                }
+                System.out.println("내 카드 : " + myHand(playerCard));
+                System.out.println("딜러 카드 : " + dealerCard.get(0) + " ???");
+                checkAce(playerCard);
+                while (true) {
+                    System.out.println("1.힛(H) 2.더블 다운(D) 3.스테이(Enter)");
+                    String yn = input.nextLine();
+                    if (yn.toUpperCase().equals("H")) {
+                        playerCard.add(deck.drawCard());
+                        checkAce(playerCard);
                         System.out.println("내 카드 : " + myHand(playerCard));
-                        System.out.println("딜러 카드 : " + myHand(dealerCard));
-                        System.out.println("남은 금액 : " + user.getUserMoney());
+                        int total = totalHand(playerCard);
+                        if (total > 21) {
+                            user.setLoseUserMoney(user.getUserMoney());
+                            System.out.println("버스트! 당신의 패배");
+                            System.out.println("내 카드 : " + myHand(playerCard));
+                            System.out.println("딜러 카드 : " + myHand(dealerCard));
+                            System.out.println("남은 금액 : " + user.getUserMoney());
+                            break;
+                        }
+                    } else if (yn.toUpperCase().equals("D")) {
+                        playerCard.add(deck.drawCard());
+                        if (stake * 2  > user.getUserMoney()) {
+                            System.out.println("판돈이 모자랍니다.");
+                            break;
+                        }
+                        user.setUserMoney(user.getUserMoney() - stake);
+                        playerCard.add(deck.drawCard());
+                        break;
+                    } else {
                         break;
                     }
-                } else if (yn.toUpperCase().equals("D")){
-                    playerCard.add(deck.drawCard());
-                    user.setUserMoney(user.getUserMoney()-10000);
-                    break;
-                }else {
-                    break;
                 }
-            }
-            System.out.println("딜러 차례...");
-            while (totalHand(dealerCard) < 17) {
-                dealerCard.add(deck.drawCard());
-            }
-            System.out.println("딜러카드 : " + myHand(dealerCard));
+                System.out.println("딜러 차례...");
+                while (totalHand(dealerCard) < 17) {
+                    dealerCard.add(deck.drawCard());
+                }
+                System.out.println("딜러카드 : " + myHand(dealerCard));
 
-            int playerTotal = totalHand(playerCard);
-            int dealerTotal = totalHand(dealerCard);
+                int playerTotal = totalHand(playerCard);
+                int dealerTotal = totalHand(dealerCard);
 
-            if (playerTotal <= 21) {
-                System.out.println("내 점수: " + playerTotal);
-                System.out.println("딜러 점수: " + dealerTotal);
+                if (playerTotal <= 21) {
+                    System.out.println("내 점수: " + playerTotal);
+                    System.out.println("딜러 점수: " + dealerTotal);
 
-                if (dealerTotal > 21 || playerTotal > dealerTotal) {
-                    System.out.println("당신의 승리!");
-                    user.setWinUserMoney(user.getUserMoney());
-                    System.out.println("남은 금액 : " + user.getUserMoney());
-                } else if (playerTotal < dealerTotal) {
-                    System.out.println("딜러의 승리!");
-                    user.setLoseUserMoney(user.getUserMoney());
-                    System.out.println("남은 금액 : " + user.getUserMoney());
+                    if (dealerTotal > 21 || playerTotal > dealerTotal) {
+                        System.out.println("당신의 승리!");
+                        user.setUserMoney(stake * 2);
+                        System.out.println("남은 금액 : " + user.getUserMoney());
+                    } else if (playerTotal < dealerTotal) {
+                        System.out.println("딜러의 승리!");
+                        System.out.println("남은 금액 : " + user.getUserMoney());
+                    } else {
+                        System.out.println("무승부!");
+                        user.setUserMoney(stake);
+                    }
+                }
+
+                System.out.println("다시 하시겠습니까? Y/N");
+                String restart = input.nextLine();
+                if (restart.toUpperCase().equals("Y")) {
+                    continue;
                 } else {
-                    System.out.println("무승부!");
+                    break;
                 }
-            }
-
-            System.out.println("다시 하시겠습니까? Y/N");
-            String restart = input.nextLine();
-            if (restart.toUpperCase().equals("Y")){
-                continue;
-            }else{
-                break;
             }
         }
     }
