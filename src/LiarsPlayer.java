@@ -31,6 +31,7 @@ public class LiarsPlayer implements Liars {
         return new ArrayList<>();
     }
     public void DrawFirstDeck(Card card) {
+        System.out.println(this.name+"가 카드를 드로우 합니다");
         this.PlayerDeck.add(card);
     }
 
@@ -148,24 +149,21 @@ public class LiarsPlayer implements Liars {
             }
             System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+rank[randomIndex] + ", " + (anyNumber+1)+"장");
             String callRank = anyNumber+1+"장";
-            playerSelect.add(new Card(rank[randomIndex],callRank));
+            playerSelect.add(new Card(callRank,rank[randomIndex]));
             return playerSelect;
         }return null;
     }
 
-    public boolean StrikeLiar( ArrayList<Card> LastPlayerCard){
-        Card checkCard = LastPlayerCard.get(LastPlayerCard.size()-1);
-        boolean isRankTrue = false;
-        for(Card c : LastPlayerCard){
-            if(c.getRank().equals(checkCard.getRank()) || c.getRank().equals("Joker")){
-                isRankTrue = true;
-            }else
-                isRankTrue = false;
+    public boolean StrikeLiar(ArrayList<Card> LastPlayerCard) {
+        String declaredRank = LastPlayerCard.get(LastPlayerCard.size() - 1).getRank(); // 마지막 카드에 선언된 Rank 저장
+
+        for (Card c : LastPlayerCard) {
+            if (!c.getRank().equals(declaredRank) && !c.getRank().equals("Joker")) {
+                return true; // 하나라도 다르면 거짓말
+            }
         }
-        if(isRankTrue){
-            return false;
-        }else
-            return true;
+
+        return false; // 전부 다 같으면 진실
     }
     void showMyDeck() {
         System.out.println(this.name + "의 패");
@@ -173,6 +171,9 @@ public class LiarsPlayer implements Liars {
             card.toCardString();
         }
         System.out.println();
+    }
+    public ArrayList<Card> getHand(){
+        return  this.PlayerDeck;
     }
 
     public String getName() {

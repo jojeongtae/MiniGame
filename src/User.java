@@ -34,12 +34,12 @@ public class User implements Liars {
     }
 
 
-
     public int setUserMoney(int userMoney) {
         this.userMoney = userMoney;
         return userMoney;
     }
-    public int addUserMoney(int addMoney){
+
+    public int addUserMoney(int addMoney) {
         this.userMoney += addMoney;
         return userMoney;
     }
@@ -61,7 +61,8 @@ public class User implements Liars {
     public String getName() {
         return this.userName;
     }
-    public  ArrayList<Card> selectAct(ArrayList<Card> gameDeck ){
+
+    public ArrayList<Card> selectAct(ArrayList<Card> gameDeck) {
         System.out.println("""
                 선택
                 1.카드 1장 드로우
@@ -69,9 +70,9 @@ public class User implements Liars {
                 """);
         int select = input.nextInt();
         input.nextLine();
-        switch (select){
+        switch (select) {
             case 1:
-                if(gameDeck.isEmpty()){
+                if (gameDeck.isEmpty()) {
                     System.out.println("드로우 할 카드가 없습니다");
                 } else {
                     DrawFirstDeck(gameDeck.remove(0));
@@ -127,21 +128,21 @@ public class User implements Liars {
         Collections.reverse(selected);
         System.out.println("선언할 카드 타입을 입력하세요 (K,Q,A)");
         String choose = input.next();
-        selected.add(new Card(choose,Integer.toString((selected.size()-1))));
+        selected.add(new Card( Integer.toString((selected.size() - 1)),choose));
         return selected;
     }
-    public boolean StrikeLiar( ArrayList<Card> LastPlayerCard){
-        Card checkCard = LastPlayerCard.get(LastPlayerCard.size()-1);
-        boolean isRankTrue = false;
-        for(Card c : LastPlayerCard){
-            if(c.getRank().equals(checkCard.getRank()) || c.getRank().equals("Joker")){
-                isRankTrue = true;
-            }else
-                isRankTrue = false;
+
+    public boolean StrikeLiar(ArrayList<Card> LastPlayerCard) {
+        String declaredRank = LastPlayerCard.get(LastPlayerCard.size() - 1).getRank();
+        for (Card c : LastPlayerCard) {
+            if (!c.getRank().equals(declaredRank) && !c.getRank().equals("Joker")) {
+                return true; // 하나라도 다르면 거짓말
+            }
         }
-        if(isRankTrue){
-            return false;
-        }else
-            return true;
+
+        return false;
+    }
+    public ArrayList<Card> getHand(){
+        return  this.PlayerDeck;
     }
 }
