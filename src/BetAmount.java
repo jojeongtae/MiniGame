@@ -1,9 +1,7 @@
 public class BetAmount {
      User user;
-     Deck deck;
-    public BetAmount(User user,Deck deck){
+    public BetAmount(User user){
      this.user = user;
-     this.deck = deck;
     }
     public int doubleDown(int stake){
     return this.user.addUserMoney((stake*4));
