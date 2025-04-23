@@ -12,7 +12,7 @@ public class LiarsPlayer implements Liars {
         String[] LastName = {"정태", "주언", "재호", "현범", "둘리", "흥민", "시현"};
         this.name = FirstName[random.nextInt(7)] + LastName[random.nextInt(7)];
         if (this.name.equals("조정태"))
-            System.out.println("하이미디어 학생 조정태라고 한다 반갑노");
+            SP.s("하이미디어 학생 조정태라고 한다 반갑노",300);
     }
     public ArrayList<Card> selectAct(ArrayList<Card> gameDeck  ){
         int select = random.nextInt(2);
@@ -31,7 +31,7 @@ public class LiarsPlayer implements Liars {
         return new ArrayList<>();
     }
     public void DrawFirstDeck(Card card) {
-        System.out.println(this.name+"가 카드를 드로우 합니다");
+        SP.s(this.name+"가 카드를 드로우 합니다",300);
         this.PlayerDeck.add(card);
     }
 
@@ -165,9 +165,9 @@ public class LiarsPlayer implements Liars {
 
         return false; // 전부 다 같으면 진실
     }
-    void showMyDeck() {
-        System.out.println(this.name + "의 패");
-        for (Card card : PlayerDeck) {
+    public void showDeck() {
+        SP.s(this.name + "의 패",500);
+        for(Card card : PlayerDeck){
             card.toCardString();
         }
         System.out.println();

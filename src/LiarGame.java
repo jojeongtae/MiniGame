@@ -40,13 +40,9 @@ public class LiarGame {
 
             DealHand(player1, player2, this.user);
 
-            ShowAllCardInHand();//확인용 겜다만듬 지움
-
             RollWhoWillBeFirst();
 
             startPlaying();
-
-            showLastPlayerCard();
 
             gameEndResetAll();
 
@@ -71,7 +67,7 @@ public class LiarGame {
 
 
     void showInfo(){
-        System.out.println("""
+        SP.s("""
                 라이어 게임을 시작하겠습니다
                 
                 😍규칙😍
@@ -90,16 +86,16 @@ public class LiarGame {
                 라이어 지목은 자신의 다음 사람을 대상으로만 지목할 수 있습니다.
                 
                 
-                """);
+                """,500);
     }
     void BettingStart() {
         while (true) {
-            System.out.print("판돈을 입력해주세요:");
+            SP.s("판돈을 입력해주세요:",500);
             int userBet = input.nextInt();
             if (userBet > user.getUserMoney()) {
                 System.out.println("판돈이 모자랍니다.");
             } else {
-                System.out.println(userBet + "원을 배팅합니다. 승리 시 " + userBet * 3 + "원 획득!");
+                SP.s(userBet + "원을 배팅합니다. 승리 시 " + userBet * 3 + "원 획득!",500);
                 this.user.LoseBet(userBet);
                 this.stake = userBet;
                 this.totalStack-=userBet;
@@ -123,8 +119,8 @@ public class LiarGame {
         }
         this.player1 = player1;
         this.player2 = player2;
-        System.out.println(player1.name + "(이)가 게임에 참가했습니다.");
-        System.out.println(player2.name + "(이)가 게임에 참가했습니다.");
+        SP.s(player1.name + "(이)가 게임에 참가했습니다.",300);
+       SP.s(player2.name + "(이)가 게임에 참가했습니다.",300);
     }
 
     void DealHand(LiarsPlayer player1, LiarsPlayer player2, User user) {
@@ -156,9 +152,11 @@ public class LiarGame {
                 this.second = this.player1;
                 this.third = this.player2;
         }
-        System.out.println("순서: " + this.first.getName() + " 👉 " + this.second.getName() + " 👉 " + this.third.getName());
-        System.out.println(this.first.getName() + " 부터 게임을 시작합니다! 확인>아무거나 입력");
-        input.next();
+        SP.s("순서: " + this.first.getName() + " 👉 " + this.second.getName() + " 👉 " + this.third.getName(),300);
+        SP.s(this.first.getName() + " 부터 게임을 시작합니다!",600);
+        System.out.println("필드 카드");
+        FieldCard.toCardString();
+        System.out.println();
     }
 
     void startPlaying() {
@@ -167,10 +165,9 @@ public class LiarGame {
 
             ArrayList<Card> firstTurn = this.first.selectAct(this.gameDeck);
             this.LastPlayerCard = firstTurn;
-            showLastPlayerCard();
             chooseForStrike(this.third, this.first);
             if (this.first.getHand().isEmpty()) {
-                System.out.println(this.first.getName() + "의 손패가 0장입니다! 승리!");
+                SP.s(this.first.getName() + "의 손패가 0장입니다! 승리!",300);
                 this.winner = this.first;
                 this.loser = this.third;
                 break;
@@ -181,10 +178,9 @@ public class LiarGame {
 
             ArrayList<Card> secondTurn = this.second.selectAct(this.gameDeck);
             this.LastPlayerCard = secondTurn;
-            showLastPlayerCard();
             chooseForStrike(this.first, this.second);
             if (this.second.getHand().isEmpty()) {
-                System.out.println(this.second.getName() + "의 손패가 0장입니다! 승리!");
+                SP.s(this.second.getName() + "의 손패가 0장입니다! 승리!",300);
                 this.winner = this.second;
                 this.loser = this.first;
                 break;
@@ -194,10 +190,9 @@ public class LiarGame {
                 break;
             ArrayList<Card> thirdTurn = this.third.selectAct(this.gameDeck);
             this.LastPlayerCard = thirdTurn;
-            showLastPlayerCard();
             chooseForStrike(this.second, this.third);
             if (this.third.getHand().isEmpty()) {
-                System.out.println(this.third.getName() + "의 손패가 0장입니다! 승리!");
+                SP.s(this.third.getName() + "의 손패가 0장입니다! 승리!",300);
                 this.winner = this.third;
                 this.loser = this.second;
                 break;
@@ -209,8 +204,8 @@ public class LiarGame {
     }
 
     void ShowAllCardInHand() {
-        player1.showMyDeck();
-        player2.showMyDeck();
+        player1.showDeck();
+        player2.showDeck();
         user.showDeck();
         System.out.println("필드 카드");
         FieldCard.toCardString();
@@ -225,8 +220,8 @@ public class LiarGame {
         if (LastPlayerCard == null)
             System.out.println("패 낸거 없음");
         else {
-            for (Card c : LastPlayerCard) {
-                c.toCardString();
+            for (int i = 0 ; i < LastPlayerCard.size()-1;i++) {
+                LastPlayerCard.get(i).toCardString();
             }
             System.out.println();
         }
@@ -234,48 +229,53 @@ public class LiarGame {
 
     void chooseForStrike(Liars LastPlayer, Liars nowPlayer) {
         if (LastPlayerCard == null || LastPlayerCard.isEmpty()) {
-            System.out.println("이전 플레이어가 카드를 내지 않았습니다. 라이어 호출 불가.");
+            SP.s("이전 플레이어가 카드를 내지 않았습니다. 라이어 호출 불가.",300);
             return;
         }
         if (LastPlayer == this.user) {
-            System.out.println("결정하세요 1.넘김 2.라이어!");
+            SP.s("결정하세요 1.넘김 2.라이어!",300);
             int choose = input.nextInt();
             if (choose == 2) {
                 this.Striker = LastPlayer;
                 this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
+                showLastPlayerCard();
                 if (isLie) {
-                    System.out.println(nowPlayer.getName() + "(은)는 라이어 였습니다!");
+                    SP.s(nowPlayer.getName() + "(은)는 라이어 였습니다!",300);
                     this.winner = LastPlayer;
                     this.loser = nowPlayer;
                 } else {
-                    System.out.println(nowPlayer.getName() + "(은)는 라이어 가 아니었습니다!");
+                    SP.s(nowPlayer.getName() + "(은)는 라이어 가 아니었습니다!",300);
                     this.loser = LastPlayer;
                     this.winner = nowPlayer;
                 }
             }
         } else {
-            System.out.println(LastPlayer.getName() + "가 결정중입니다");
+            SP.s(LastPlayer.getName() + "(이)가 고민중입니다...",1000);
             int choose = random.nextInt(100) + 1;
-            if (choose < 40) {
-                System.out.println(LastPlayer.getName()+"가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지");
+            if(this.user.PlayerDeck.isEmpty() && LastPlayerCard.size()>1)
+                choose-=50;
+
+            if (choose < 50) {
+                SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
                 this.Striker = LastPlayer;
                 this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
+                showLastPlayerCard();
                 if (isLie) {
-                    System.out.println(nowPlayer.getName()+"(은)는 라이어 였습니다!");
+                    SP.s(nowPlayer.getName()+"(은)는 라이어 였습니다!",300);
                     this.winner = LastPlayer;
                     this.loser = nowPlayer;
                 } else {
-                    System.out.println(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!");
+                    SP.s(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!",300);
                     this.loser = LastPlayer;
                     this.winner = nowPlayer;
                 }
-            } else System.out.println(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다");
+            } else SP.s(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다",800);
         }
     }
 
     boolean check() {
         if (this.winner != null && this.loser != null) {
-            System.out.println("게임 종료! 승자: " + winner.getName() + ", 패자: " + loser.getName());
+            SP.s("게임 종료! 승자: " + winner.getName() + ", 패자: " + loser.getName(),300);
             if(this.winner == this.user)
                 this.winStack++;
             return true;

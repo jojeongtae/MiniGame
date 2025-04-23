@@ -51,8 +51,8 @@ public class User implements Liars {
     }
 
     public void showDeck() {
-        System.out.println(this.getUserName() + "의 패");
-        for (Card card : PlayerDeck) {
+        SP.s(this.getUserName() + "의 패",500);
+        for(Card card : PlayerDeck){
             card.toCardString();
         }
         System.out.println();
@@ -92,9 +92,9 @@ public class User implements Liars {
     }
 
     public ArrayList<Card> submitCard() {
-        showDeck();
         ArrayList<Card> selected = new ArrayList<>();
-        System.out.println("제출 할 카드 번호들을 3장까지 선택하세요 (여러장 선택시 중간에 공백)");
+        SP.s("제출 할 카드 번호들을 3장까지 선택하세요 (여러장 선택시 중간에 공백)",300);
+        showDeck();
         while (true) {
             String select = input.nextLine().trim();
             if (select.isEmpty()) {
@@ -128,7 +128,7 @@ public class User implements Liars {
             }
         }
         Collections.reverse(selected);
-        System.out.println("선언할 카드 타입을 입력하세요 (K,Q,A)");
+        SP.s("선언할 카드 타입을 입력하세요 (K,Q,A)",200);
         String choose = input.next();
         selected.add(new Card( Integer.toString((selected.size() - 1)),choose));
         return selected;

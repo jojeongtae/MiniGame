@@ -7,4 +7,5 @@ public interface Liars {
     ArrayList<Card> selectAct(ArrayList<Card> gameDeck );
     boolean StrikeLiar( ArrayList<Card> LastPlayerCard);
     ArrayList<Card> getHand();
+    void showDeck();
 }
