@@ -53,16 +53,18 @@ public class BlackJack {
                             break;
                         }else {
                             user.setUserMoney(user.getUserMoney() - stake);
-                            count++;
+                            count = 2;
                             break;
                         }
                     } else {
+                        count++;
                         break;
                     }
                 }
                 System.out.println("딜러 차례...");
-                while (totalHand(dealerCard) < 17 && totalHand(playerCard) < 21) {
+                while (totalHand(dealerCard) < 17) {
                     dealerCard.add(deck.drawCard());
+                    dealerAce(dealerCard);
                 }
 
                 int playerTotal = totalHand(playerCard);
@@ -75,12 +77,13 @@ public class BlackJack {
 
                     if (dealerTotal > 21 || playerTotal > dealerTotal) {
                         System.out.println("당신의 승리!");
-                        if (count == 1){
+                        if (count == 2){
                             bet.doubleDown(stake);
-                        } else if (count == 0) {
+                        } else if (count == 1) {
                             bet.split(stake);
                         }
                         if (playerCard.size() == 2 && playerTotal == 21){
+                            System.out.println("블랙잭!");
                             bet.blackjack(stake);
                         }
                         System.out.println("남은 금액 : " + user.getUserMoney());
@@ -105,7 +108,7 @@ public class BlackJack {
                     System.out.println("남은 금액 : " + user.getUserMoney());
                 }
                 if (user.getUserMoney() < 100){
-                    System.out.println("돈없으면 나가쇼");
+                    System.out.println(" 어이 "+user.getName()+" 돈없으면 나가쇼");
                     break;
                 }
                 System.out.println("다시 하시려면 Y");
@@ -133,19 +136,29 @@ public class BlackJack {
         for (int i = 0 ; i<hand.size();i++){
             int value = hand.get(i).getValue();
             total += value;
-            if (value == 1){
-            }
+
         }
 
 return total;
     }
-    private void checkAce(List<Card> hand) {
+    private void checkAce(List<Card> hand) { //Ace 1 or 11
         for (int i = 0 ; i<hand.size();i++) {
             Card card = hand.get(i);
             if (card.getRank().equals("A") && card.getValue() == 1) {
                 System.out.println("A카드를 11점으로 바꾸시겠습니까? (Y/N)");
                 String ayn = input.nextLine();
                 if (ayn.equalsIgnoreCase("Y")) {
+                    card.setValue(11);
+                    break;
+                }
+            }
+        }
+    }
+    private void dealerAce(List<Card> hand){
+        for (int i = 0 ; i<hand.size();i++){
+            Card card = hand.get(i);
+            if (card.getRank().equals("A") &&card.getValue() ==1 ){
+                if (totalHand(dealerCard) < 11){
                     card.setValue(11);
                     break;
                 }

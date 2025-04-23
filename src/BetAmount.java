@@ -6,7 +6,7 @@ public class BetAmount {
      this.deck = deck;
     }
     public int doubleDown(int stake){
-    return this.user.addUserMoney((stake*3));
+    return this.user.addUserMoney((stake*4));
     }
     public int split(int stake){
         return this.user.addUserMoney((stake*2));
@@ -15,9 +15,6 @@ public class BetAmount {
     public int blackjack(int stake){
         return this.user.addUserMoney((stake*3));
     }
-//    public int blackjack(int userMoney){
-//
-//    }
 
 }
 
