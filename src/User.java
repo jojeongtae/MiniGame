@@ -33,19 +33,15 @@ public class User implements Liars {
         return this.userMoney;
     }
 
-    public void setLoseUserMoney(int userMoney) {
-        this.userMoney = userMoney/2;
-    }
-    public void setWinUserMoney(int userMoney) {
-        this.userMoney = userMoney *2;
-    }
+
+
     public int setUserMoney(int userMoney) {
         this.userMoney = userMoney;
-        return this.userMoney;
+        return userMoney;
     }
     public int addUserMoney(int addMoney){
-    this.userMoney += addMoney;
-    return userMoney;
+        this.userMoney += addMoney;
+        return userMoney;
     }
     //이 밑으로 라이어 게임 전용 함수들!!!!🐭
 
@@ -87,9 +83,7 @@ public class User implements Liars {
         }
         return new ArrayList<>();
     }
-    public void callLiar(){
 
-    }
     public void DrawFirstDeck(Card card) {
         this.PlayerDeck.add(card);
     }
@@ -131,7 +125,23 @@ public class User implements Liars {
             }
         }
         Collections.reverse(selected);
+        System.out.println("선언할 카드 타입을 입력하세요 (K,Q,A)");
+        String choose = input.next();
+        selected.add(new Card(choose,Integer.toString((selected.size()-1))));
         return selected;
     }
+    public boolean StrikeLiar( ArrayList<Card> LastPlayerCard){
+        Card checkCard = LastPlayerCard.get(LastPlayerCard.size()-1);
+        boolean isRankTrue = false;
+        for(Card c : LastPlayerCard){
+            if(c.getRank().equals(checkCard.getRank()) || c.getRank().equals("Joker")){
+                isRankTrue = true;
+            }else
+                isRankTrue = false;
+        }
+        if(isRankTrue){
+            return false;
+        }else
+            return true;
+    }
 }
-
