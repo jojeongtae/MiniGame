@@ -12,9 +12,9 @@ public class Game {
 
     public void run() {
         while (true) {
-            System.out.print("사용하실 아이디를 입력해주세요");
+            System.out.print("사용하실 아이디를 입력해주세요: ");
             String inputId = input.nextLine();
-            System.out.print("사용하실 비번를 입력해주세요");
+            System.out.print("사용하실 비번를 입력해주세요: ");
             String inputPw = input.nextLine();
             boolean flag = false;
             for (int i = 0; i < user.length; i++) {
@@ -34,7 +34,7 @@ public class Game {
 
     public void selectGame(User login) {
         while (true) {
-            System.out.print("(1)블랙잭,(2)홀덤 (3)미정: ");
+            System.out.print("(1)블랙잭,(2)홀덤 (3)라이어게임 ");
             int select = input.nextInt();
             switch (select) {
                 case 1:
@@ -44,6 +44,8 @@ public class Game {
                 case 2:
                     break;
                 case 3:
+                    LiarGame game3 = new LiarGame(login);
+                    game3.start();
                     break;
             }
         }
