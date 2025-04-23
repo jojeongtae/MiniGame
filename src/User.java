@@ -27,14 +27,13 @@ public class User {
         return this.userMoney;
     }
 
-    public void setLoseUserMoney(int userMoney) {
-        this.userMoney = userMoney/2;
-    }
-    public void setWinUserMoney(int userMoney) {
-        this.userMoney = userMoney *2;
-    }
+
     public int setUserMoney(int userMoney) {
         this.userMoney = userMoney;
-        return userMoney;
+        return this.userMoney;
+    }
+    public int addUserMoney(int addMoney){
+    this.userMoney += addMoney;
+    return userMoney;
     }
 }

@@ -13,11 +13,12 @@ public class BlackJack {
     }
     public void start(){
         while(true) {
-
+            BetAmount bet = new BetAmount(user,deck);
             int count = 0;
             System.out.println("블랙잭 게임을 시작 하겠습니다.");
             System.out.print("판돈을 입력해주세요 : ");
-            int stake = input.nextInt();
+            int stake = 0;
+            stake = input.nextInt();
             input.nextLine();
             if (stake > user.getUserMoney()){
                 System.out.println("판돈이 모자랍니다.");
@@ -37,7 +38,7 @@ public class BlackJack {
                 while (true) {
                     System.out.println("1.힛(H) 2.더블 다운(D) 3.스테이(Enter)");
                     String yn = input.nextLine();
-                    if (yn.toUpperCase().equals("H")) {
+                    if (yn.toUpperCase().equals("H") || yn.equals("1")) {
                         playerCard.add(deck.drawCard());
                         checkAce(playerCard);
                         System.out.println("내 카드 : " + myHand(playerCard));
@@ -45,7 +46,7 @@ public class BlackJack {
                         if (total > 21) {
                             break;
                         }
-                    } else if (yn.toUpperCase().equals("D")) {
+                    } else if (yn.toUpperCase().equals("D")|| yn.equals("2")){
                         playerCard.add(deck.drawCard());
                         if (stake  > user.getUserMoney()) {
                             System.out.println("판돈이 모자랍니다.");
@@ -75,9 +76,12 @@ public class BlackJack {
                     if (dealerTotal > 21 || playerTotal > dealerTotal) {
                         System.out.println("당신의 승리!");
                         if (count == 1){
-                            user.setUserMoney(stake * 4);
+                            bet.doubleDown(stake);
                         } else if (count == 0) {
-                            user.setUserMoney(stake * 2);
+                            bet.split(stake);
+                        }
+                        if (playerCard.size() == 2 && playerTotal == 21){
+                            bet.blackjack(stake);
                         }
                         System.out.println("남은 금액 : " + user.getUserMoney());
                     } else if (playerTotal < dealerTotal) {
@@ -85,6 +89,11 @@ public class BlackJack {
                         System.out.println("남은 금액 : " + user.getUserMoney());
                     } else {
                         System.out.println("무승부!");
+                        if (count == 1){
+                            user.setUserMoney(user.getUserMoney()+(stake*2));
+                            System.out.println("남은 금액 : " + user.getUserMoney());
+                            break;
+                        }
                         user.setUserMoney(user.getUserMoney()+stake);
                         System.out.println("남은 금액 : " + user.getUserMoney());
 
@@ -92,7 +101,7 @@ public class BlackJack {
                 }else {
                     System.out.println("버스트! 당신의 패배");
                     System.out.println("내 패 : " + myHand(playerCard)+ " 내 점수 : " + playerTotal);
-                    System.out.println("딜러 패 : " + myHand(playerCard) +" 딜러 점수: " + dealerTotal);
+                    System.out.println("딜러 패 : " + myHand(dealerCard) +" 딜러 점수: " + dealerTotal);
                     System.out.println("남은 금액 : " + user.getUserMoney());
                 }
                 if (user.getUserMoney() < 100){
