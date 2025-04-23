@@ -61,7 +61,9 @@ public class User implements Liars {
     public String getName() {
         return this.userName;
     }
-
+    public void getBet(int money){
+        this.userMoney+=money;
+    }
     public ArrayList<Card> selectAct(ArrayList<Card> gameDeck) {
         System.out.println("""
                 선택
