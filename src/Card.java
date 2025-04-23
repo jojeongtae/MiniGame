@@ -8,6 +8,10 @@ public class Card {
         this.rank = rank;
         this.value = value;
     }
+    public Card(String suit,String rank){
+        this.suit = suit;
+        this.rank = rank;
+    }
     public String getRank() {
         return rank;
     }
@@ -20,6 +24,9 @@ public class Card {
 
     public String toString(){
         return suit+rank;
+    }
+    public void toCardString(){
+        System.out.print(" [ "+suit+" | "+rank+" ] ");
     }
 
 }

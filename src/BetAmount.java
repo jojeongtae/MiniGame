@@ -15,6 +15,9 @@ public class BetAmount {
     public int blackjack(int stake){
         return this.user.addUserMoney((stake*3));
     }
+//    public int blackjack(int userMoney){
+//
+//    }
 
 }
 
