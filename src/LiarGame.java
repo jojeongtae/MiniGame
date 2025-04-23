@@ -3,20 +3,22 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class LiarGame {
-    User user;
-    int stake;
     ArrayList<Card> gameDeck;
-    Card FieldCard;
+    ArrayList<Card> LastPlayerCard;
+    User user;
     LiarsPlayer player1;
     LiarsPlayer player2;
     Liars first;
     Liars second;
     Liars third;
     Liars Striker = null;
-    boolean isLie = false;
     Liars winner = null;
     Liars loser = null;
-    ArrayList<Card> LastPlayerCard;
+    int stake;
+    int totalStack=0;
+    int winStack = 0;
+    boolean isLie = false;
+    Card FieldCard;
     Scanner input = new Scanner(System.in);
     Random random = new Random();
 
@@ -25,40 +27,71 @@ public class LiarGame {
     }
 
     void start() {
+
+
+
+            showInfo();
+        do {
+            BettingStart();
+
+            setGameDeck();
+
+            setPlayers();
+
+            DealHand(player1, player2, this.user);
+
+            ShowAllCardInHand();//확인용 겜다만듬 지움
+
+            RollWhoWillBeFirst();
+
+            startPlaying();
+
+            showLastPlayerCard();
+
+            gameEndResetAll();
+
+            String YorN = input.nextLine();
+
+            if(YorN.equalsIgnoreCase("n")){
+                sayGoodBye();
+                break;
+            }
+
+        }while(true);
+
+
+    }
+
+
+
+
+
+
+
+
+
+    void showInfo(){
         System.out.println("""
                 라이어 게임을 시작하겠습니다
                 
                 😍규칙😍
                 
                 승리조건은 자신의 모든 패를 제출. 혹은 상대방의 거짓말을 간파
+                
                 자신의 턴에 카드를 낼지, 1장 드로우를 할지 선택할 수 있습니다.
+                
                 같은 랭크의 카드를 3장까지 동시에 낼수 있습니다.
                 혹은 서로 다른 랭크의 카드도 제출 가능하나 상대방이 라이어를 외친다면 패배!
+                
                 조커의 경우, 제출할 때 어떤 랭크든 같은 랭크로 취급됩니다
+                
                 순서는 매 판 랜덤으로 결정됩니다
+                
                 라이어 지목은 자신의 다음 사람을 대상으로만 지목할 수 있습니다.
+                
+                
                 """);
-
-        BettingStart();
-
-        setGameDeck();
-
-        setPlayers();
-
-        DealHand(player1, player2, this.user);
-
-        ShowAllCardInHand();//확인용 겜다만듬 지움
-
-        RollWhoWillBeFirst();
-
-        startPlaying();
-
-        showLastPlayerCard();
-
-
     }
-
-
     void BettingStart() {
         while (true) {
             System.out.print("판돈을 입력해주세요:");
@@ -66,9 +99,10 @@ public class LiarGame {
             if (userBet > user.getUserMoney()) {
                 System.out.println("판돈이 모자랍니다.");
             } else {
-                System.out.println(userBet + "원을 배팅합니다. 승리 시 " + userBet * 2 + "원 획득!");
+                System.out.println(userBet + "원을 배팅합니다. 승리 시 " + userBet * 3 + "원 획득!");
                 this.user.LoseBet(userBet);
                 this.stake = userBet;
+                this.totalStack-=userBet;
                 break;
             }
         }
@@ -235,15 +269,42 @@ public class LiarGame {
                     this.loser = LastPlayer;
                     this.winner = nowPlayer;
                 }
-            } else System.out.println("가만히 있었습니다");
+            } else System.out.println(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다");
         }
     }
 
     boolean check() {
         if (this.winner != null && this.loser != null) {
             System.out.println("게임 종료! 승자: " + winner.getName() + ", 패자: " + loser.getName());
+            if(this.winner == this.user)
+                this.winStack++;
             return true;
         }
         return false;
+    }
+    void gameEndResetAll(){
+        if(this.winner==this.user){
+            int userGetBet = this.stake*3;
+            System.out.println("게임 승리로 "+userGetBet+"원을 획득했습니다!");
+            this.user.getBet(this.user.getUserMoney()+userGetBet);
+            this.totalStack+=userGetBet;
+            System.out.println("현재 보유 금액: "+this.user.getUserMoney()+"원 ");
+        }else
+            System.out.println("현재 보유 금액: "+this.user.getUserMoney()+"원 ");
+        this.stake=0;
+        this.user.getHand().clear();
+        this.winner=null;
+        this.Striker=null;
+        this.loser = null;
+        this.LastPlayerCard=null;
+
+        System.out.println("한판 더? y/n");
+        input.nextLine();
+    }
+    void sayGoodBye(){
+        System.out.println("다음에봐용🤣");
+        System.out.println("승: "+this.winStack+" "+" 총 수입: "+this.totalStack);
+        this.winStack=0;
+        this.totalStack=0;
     }
 }
