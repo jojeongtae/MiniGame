@@ -1,3 +1,5 @@
+import java.util.List;
+
 public class Card {
     private String suit;   // 무늬 (♥, ♠, ♣, ◆)
     private String rank;   // 숫자 (A, 2~10, J, Q, K)
@@ -21,6 +23,7 @@ public class Card {
     public void setValue(int value) {
         this.value = value;
     }
+
 
     public String toString(){
         return suit+rank;
