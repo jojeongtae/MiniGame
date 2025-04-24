@@ -1,10 +1,12 @@
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class LiarsPlayer implements Liars {
     String name;
     ArrayList<Card> PlayerDeck = new ArrayList<>();
     Card FieldCard;
+    String mainRank;
     Random random = new Random();
 
     public LiarsPlayer() {
@@ -12,26 +14,44 @@ public class LiarsPlayer implements Liars {
         String[] LastName = {"정태", "주언", "재호", "현범", "둘리", "흥민", "시현"};
         this.name = FirstName[random.nextInt(7)] + LastName[random.nextInt(7)];
         if (this.name.equals("조정태"))
-            SP.s("하이미디어 학생 조정태라고 한다 반갑노",300);
+            SP.s("하이미디어 학생 조정태라고 한다 반갑노", 300);
     }
-    public ArrayList<Card> selectAct(ArrayList<Card> gameDeck  ){
-        int select = random.nextInt(2);
-        switch(select){
-            case 0:
-                if(gameDeck.isEmpty()){
-                    System.out.println("드로우 할 카드가 없습니다");
-                } else {
-                    DrawFirstDeck(gameDeck.remove(0));
+
+    public ArrayList<Card> selectAct(ArrayList<Card> gameDeck) {
+        ArrayList<Card> playerSelect = new ArrayList<>();
+        while (playerSelect.isEmpty()) {
+            int choice = random.nextInt(2);
+            int randomCount = random.nextInt(3)+1;
+            switch (choice) {
+                case 0:
+
+                for (Card c : this.PlayerDeck) {
+                    if (c.getRank().equals(this.mainRank) || c.getRank().equals("Joker")) {
+                        playerSelect.add(c);
+                        if (randomCount <= playerSelect.size()) {
+                            break;
+                        }
+                    }
+
                 }
                 break;
-            case 1:
-                ArrayList <Card> returnCards = submitCard();
-                return returnCards;
-        }
-        return new ArrayList<>();
+                case 1:
+                for (Card c : this.PlayerDeck) {
+                        playerSelect.add(c);
+                    if (randomCount <= playerSelect.size()) {
+                        break;
+                    }
+                }break;
+
+            }
+        }this.PlayerDeck.removeAll(playerSelect);
+        SP.s(this.name + "(이)가 카드를 내면서 말합니다! 😁 [" + this.mainRank + "] " + playerSelect.size() + "장! ", 1000);
+        return playerSelect;
+
     }
+
     public void DrawFirstDeck(Card card) {
-        SP.s(this.name+"가 카드를 드로우 합니다",300);
+        SP.s(this.name + "가 카드를 드로우 합니다", 300);
         this.PlayerDeck.add(card);
     }
 
@@ -39,141 +59,60 @@ public class LiarsPlayer implements Liars {
         boolean choice = random.nextBoolean();
         ArrayList<Card> playerSelect = new ArrayList<>();
         if (choice) {
-            int randomAct = random.nextInt(5);
-            switch (randomAct) {
-                case 0:
-                    if (PlayerDeck.get(0).getRank().equals(PlayerDeck.get(1).getRank()) || PlayerDeck.get(1).getRank().equals("Joker")) {
-                        playerSelect.add(PlayerDeck.get(1));
-                        playerSelect.add(PlayerDeck.get(0));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(0).getRank() + ", " + "2장");
-                        playerSelect.add(new Card("2장",PlayerDeck.get(0).getRank()));
-                        return playerSelect;
-                    } else if (PlayerDeck.get(0).getRank().equals(PlayerDeck.get(2).getRank()) || PlayerDeck.get(2).getRank().equals("Joker")) {
-                        playerSelect.add(PlayerDeck.get(2));
-                        playerSelect.add(PlayerDeck.get(0));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(0).getRank() + ", " + "2장");
-                        playerSelect.add(new Card("2장",PlayerDeck.get(0).getRank()));
-                        return playerSelect;
-                    } else {
-                        playerSelect.add(PlayerDeck.get(0));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(0).getRank() + ", " + "1장");
-                        playerSelect.add(new Card("1장",PlayerDeck.get(0).getRank()));
-                        return playerSelect;
-                    }
-                case 1:
-                    if (PlayerDeck.get(1).getRank().equals(PlayerDeck.get(2).getRank()) || PlayerDeck.get(2).getRank().equals("Joker")) {
-                        playerSelect.add(PlayerDeck.get(2));
-                        playerSelect.add(PlayerDeck.get(1));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(1).getRank() + ", " + "2장");
-                        playerSelect.add(new Card("2장",PlayerDeck.get(1).getRank()));
-                        return playerSelect;
-                    } else if (PlayerDeck.get(1).getRank().equals(PlayerDeck.get(3).getRank()) || PlayerDeck.get(3).getRank().equals("Joker")) {
-                        playerSelect.add(PlayerDeck.get(3));
-                        playerSelect.add(PlayerDeck.get(1));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(1).getRank() + ", " + "2장");
-                        playerSelect.add(new Card("2장",PlayerDeck.get(1).getRank()));
-                        return playerSelect;
-                    } else {
-                        playerSelect.add(PlayerDeck.get(1));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(1).getRank() + ", " + "1장");
-                        playerSelect.add(new Card("1장",PlayerDeck.get(1).getRank()));
-                        return playerSelect;
-                    }
-                case 2:
-                    if (PlayerDeck.get(2).getRank().equals(PlayerDeck.get(3).getRank()) || PlayerDeck.get(3).getRank().equals("Joker")) {
-                        playerSelect.add(PlayerDeck.get(3));
-                        playerSelect.add(PlayerDeck.get(2));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(2).getRank() + ", " + "2장");
-                        playerSelect.add(new Card("2장",PlayerDeck.get(2).getRank()));
-                        return playerSelect;
-                    } else if (PlayerDeck.get(2).getRank().equals(PlayerDeck.get(4).getRank()) || PlayerDeck.get(4).getRank().equals("Joker")) {
-                        playerSelect.add(PlayerDeck.get(4));
-                        playerSelect.add(PlayerDeck.get(2));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(2).getRank() + ", " + "2장");
-                        playerSelect.add(new Card("2장",PlayerDeck.get(2).getRank()));
-                        return playerSelect;
-                    } else {
-                        playerSelect.add(PlayerDeck.get(2));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(2).getRank() + ", " + "1장");
-                        playerSelect.add(new Card("1장",PlayerDeck.get(2).getRank()));
-                        return playerSelect;
-                    }
-                case 3:
-                    if (PlayerDeck.get(0).getRank().equals(PlayerDeck.get(1).getRank()) && (PlayerDeck.get(1).getRank().equals(PlayerDeck.get(2).getRank()) ||PlayerDeck.get(1).getRank().equals("Joker")) ) {
-                        playerSelect.add(PlayerDeck.get(2));
-                        playerSelect.add(PlayerDeck.get(1));
-                        playerSelect.add(PlayerDeck.get(0));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(0).getRank() + ", " + "3장");
-                        playerSelect.add(new Card("3장",PlayerDeck.get(0).getRank()));
-                        return playerSelect;
-                    }else if (PlayerDeck.get(0).getRank().equals(PlayerDeck.get(2).getRank()) && (PlayerDeck.get(2).getRank().equals(PlayerDeck.get(3).getRank()) ||PlayerDeck.get(2).getRank().equals("Joker")) ){
-                        playerSelect.add(PlayerDeck.get(3));
-                        playerSelect.add(PlayerDeck.get(2));
-                        playerSelect.add(PlayerDeck.get(0));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(0).getRank() + ", " + "3장");
-                        playerSelect.add(new Card("3장",PlayerDeck.get(0).getRank()));
-                        return playerSelect;
-                    }else if (PlayerDeck.get(1).getRank().equals(PlayerDeck.get(2).getRank()) && (PlayerDeck.get(2).getRank().equals(PlayerDeck.get(3).getRank()) ||PlayerDeck.get(3).getRank().equals("Joker")) ){
-                        playerSelect.add(PlayerDeck.get(3));
-                        playerSelect.add(PlayerDeck.get(2));
-                        playerSelect.add(PlayerDeck.get(1));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(1).getRank() + ", " + "3장");
-                        playerSelect.add(new Card("3장",PlayerDeck.get(1).getRank()));
-                        return playerSelect;
-                    }else if (PlayerDeck.get(1).getRank().equals(PlayerDeck.get(3).getRank()) && (PlayerDeck.get(3).getRank().equals(PlayerDeck.get(4).getRank()) ||PlayerDeck.get(4).getRank().equals("Joker")) ){
-                        playerSelect.add(PlayerDeck.get(4));
-                        playerSelect.add(PlayerDeck.get(3));
-                        playerSelect.add(PlayerDeck.get(1));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(1).getRank() + ", " + "3장");
-                        playerSelect.add(new Card("3장",PlayerDeck.get(1).getRank()));
-                        return playerSelect;
-                    }else{
-                        playerSelect.add(PlayerDeck.get(3));
-                        System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(3).getRank() + ", " + "1장");
-                        playerSelect.add(new Card("1장",PlayerDeck.get(3).getRank()));
-                        return playerSelect;
-                    }
-                case 4:
-                    playerSelect.add(PlayerDeck.get(4));
-                    System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+PlayerDeck.get(4).getRank() + ", " + "1장");
-                    playerSelect.add(new Card("1장",PlayerDeck.get(4).getRank()));
-                    return playerSelect;
+            int stop = random.nextInt(3);
+            for (Card c : this.PlayerDeck) {
+                if (c.getRank().equals(this.mainRank)) {
+                    playerSelect.add(c);
+                    stop++;
+                }
+                if (stop > 3 || playerSelect.size() > 3) {
+                    break;
+                }
             }
-
-        }else{
-            String [] rank = {"Q","K","A"};
-            int randomIndex = random.nextInt(3);
-            int anyNumber = random.nextInt(3);
-            for(int i = anyNumber ; i >= 0 ; i--){
-                playerSelect.add(PlayerDeck.get(i));
-            }
-            System.out.println(this.name+"(이)가 카드를 내면서 말합니다! 😁 "+rank[randomIndex] + ", " + (anyNumber+1)+"장");
-            String callRank = anyNumber+1+"장";
-            playerSelect.add(new Card(callRank,rank[randomIndex]));
+            if (playerSelect.isEmpty())
+                return playerSelect;
+            this.PlayerDeck.removeAll(playerSelect);
+            SP.s(this.name + "(이)가 카드를 내면서 말합니다! 😁 [" + this.mainRank + "] " + playerSelect.size() + "장! ", 1000);
             return playerSelect;
-        }return null;
+        } else {
+            int stop = random.nextInt(3);
+            for (Card c : this.PlayerDeck) {
+                if (c.getRank().equals(this.mainRank)) {
+                    playerSelect.add(c);
+                    stop++;
+                }
+                if (stop > 3 || playerSelect.size() > 3) {
+                    break;
+                }
+            }
+            this.PlayerDeck.removeAll(playerSelect);
+            SP.s(this.name + "(이)가 카드를 내면서 말합니다! 😁 [" + this.mainRank + "] " + playerSelect.size() + "장! ", 1000);
+            return playerSelect;
+        }
+
     }
 
     public boolean StrikeLiar(ArrayList<Card> LastPlayerCard) {
-        String declaredRank = LastPlayerCard.get(LastPlayerCard.size() - 1).getRank(); // 마지막 카드에 선언된 Rank 저장
 
         for (Card c : LastPlayerCard) {
-            if (!c.getRank().equals(declaredRank) && !c.getRank().equals("Joker")) {
+            if (!c.getRank().equals(this.mainRank) && !c.getRank().equals("Joker")) {
                 return true; // 하나라도 다르면 거짓말
             }
         }
 
         return false; // 전부 다 같으면 진실
     }
+
     public void showDeck() {
-        SP.s(this.name + "의 패",500);
-        for(Card card : PlayerDeck){
+        SP.s(this.name + "의 패", 500);
+        for (Card card : PlayerDeck) {
             card.toCardString();
         }
         System.out.println();
     }
-    public ArrayList<Card> getHand(){
-        return  this.PlayerDeck;
+
+    public ArrayList<Card> getHand() {
+        return this.PlayerDeck;
     }
 
     public String getName() {

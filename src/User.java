@@ -7,6 +7,7 @@ public class User implements Liars {
     private String pw;
     private String userName;
     private int userMoney;
+    String mainRank;
     ArrayList<Card> PlayerDeck = new ArrayList<>();
     Scanner input = new Scanner(System.in);
 
@@ -65,26 +66,45 @@ public class User implements Liars {
         this.userMoney+=money;
     }
     public ArrayList<Card> selectAct(ArrayList<Card> gameDeck) {
-        System.out.println("""
-                선택
-                1.카드 1장 드로우
-                2.카드 번호 선택 , 제출
-                """);
-        int select = input.nextInt();
-        input.nextLine();
-        switch (select) {
-            case 1:
-                if (gameDeck.isEmpty()) {
-                    System.out.println("드로우 할 카드가 없습니다");
-                } else {
-                    DrawFirstDeck(gameDeck.remove(0));
-                }
-                return new ArrayList<>();
-            case 2:
-                return submitCard();
+        ArrayList<Card> selected = new ArrayList<>();
+        SP.s("제출 할 카드 번호들을 3장까지 선택하세요 (여러장 선택시 중간에 공백)",300);
+        showDeck();
+        while (true) {
+            String select = input.nextLine().trim();
+            if (select.isEmpty()) {
+                System.out.println("입력값이 없습니다. 다시 입력해주세요.");
+                continue;
+            }
+            String[] arr = select.split(" ");
 
+            if (arr.length > 3) {
+                System.out.println("카드는 3장까지 가능합니다");
+            } else if (arr.length > 0) {
+                boolean flag = true;
+                for (int i = arr.length - 1; i >= 0; i--) {
+                    int index = Integer.parseInt(arr[i]) - 1;
+                    if (index >= 0 && index < PlayerDeck.size()) {
+                        selected.add(PlayerDeck.get(index));
+                        PlayerDeck.remove(index);
+                    } else {
+                        System.out.println("잘못된 카드 번호: " + arr[i]);
+                        flag = false;
+                        break;
+                    }
+                }
+                if (flag) {
+                    break;
+                } else {
+                    System.out.println("다시 시도하세요. 1~" + PlayerDeck.size() + " 범위의 카드 번호를 입력해주세요.");
+                }
+            } else {
+                System.out.println("1장 이상의 카드를 선택해야 합니다.");
+            }
         }
-        return new ArrayList<>();
+        Collections.reverse(selected);
+        SP.s(getName() + "(이)가 카드를 내면서 말합니다! 😁 [" + this.mainRank + "] " + selected.size() + "장! ", 1000);
+
+        return selected;
     }
 
     public void DrawFirstDeck(Card card) {
@@ -128,17 +148,13 @@ public class User implements Liars {
             }
         }
         Collections.reverse(selected);
-        SP.s("선언할 카드 타입을 입력하세요 (K,Q,A)",200);
-        String choose = input.next();
-        selected.add(new Card( Integer.toString((selected.size() - 1)),choose));
         return selected;
     }
 
     public boolean StrikeLiar(ArrayList<Card> LastPlayerCard) {
-        String declaredRank = LastPlayerCard.get(LastPlayerCard.size() - 1).getRank();
         for (Card c : LastPlayerCard) {
-            if (!c.getRank().equals(declaredRank) && !c.getRank().equals("Joker")) {
-                return true; // 하나라도 다르면 거짓말
+            if (!c.getRank().equals(this.mainRank) && !c.getRank().equals("Joker")) {
+                return true;
             }
         }
 

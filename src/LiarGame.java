@@ -17,8 +17,10 @@ public class LiarGame {
     int stake;
     int totalStack=0;
     int winStack = 0;
+    int gamePlayed = 0;
     boolean isLie = false;
     Card FieldCard;
+    String mainRank;
     Scanner input = new Scanner(System.in);
     Random random = new Random();
 
@@ -41,6 +43,7 @@ public class LiarGame {
             DealHand(player1, player2, this.user);
 
             RollWhoWillBeFirst();
+
 
             startPlaying();
 
@@ -132,6 +135,11 @@ public class LiarGame {
         this.FieldCard = gameDeck.remove(0);
         player1.FieldCard = this.FieldCard;
         player2.FieldCard = this.FieldCard;
+        String [] rank = {"A","Q","K"};
+        this.mainRank = rank[random.nextInt(3)];
+        player1.mainRank = mainRank;
+        player2.mainRank = mainRank;
+        user.mainRank = mainRank;
     }
 
     void RollWhoWillBeFirst() {
@@ -157,6 +165,8 @@ public class LiarGame {
         System.out.println("필드 카드");
         FieldCard.toCardString();
         System.out.println();
+        SP.s("이번 라운드 제시 랭크: ["+this.mainRank+"] 입니다!",800);
+
     }
 
     void startPlaying() {
@@ -166,40 +176,45 @@ public class LiarGame {
             ArrayList<Card> firstTurn = this.first.selectAct(this.gameDeck);
             this.LastPlayerCard = firstTurn;
             chooseForStrike(this.third, this.first);
+            stop = check();
+            if(stop)
+                break;
             if (this.first.getHand().isEmpty()) {
                 SP.s(this.first.getName() + "의 손패가 0장입니다! 승리!",300);
                 this.winner = this.first;
                 this.loser = this.third;
+                check();
                 break;
             }
-            stop = check();
-            if(stop)
-                break;
+
 
             ArrayList<Card> secondTurn = this.second.selectAct(this.gameDeck);
             this.LastPlayerCard = secondTurn;
             chooseForStrike(this.first, this.second);
+            stop = check();
+            if(stop)
+                break;
             if (this.second.getHand().isEmpty()) {
                 SP.s(this.second.getName() + "의 손패가 0장입니다! 승리!",300);
                 this.winner = this.second;
                 this.loser = this.first;
+                check();
                 break;
             }
-            stop = check();
-            if(stop)
-                break;
+
             ArrayList<Card> thirdTurn = this.third.selectAct(this.gameDeck);
             this.LastPlayerCard = thirdTurn;
             chooseForStrike(this.second, this.third);
+            stop = check();
+            if(stop)
+                break;
             if (this.third.getHand().isEmpty()) {
                 SP.s(this.third.getName() + "의 손패가 0장입니다! 승리!",300);
                 this.winner = this.third;
                 this.loser = this.second;
+                check();
                 break;
             }
-            stop = check();
-            if(stop)
-                break;
         } while (true);
     }
 
@@ -220,7 +235,7 @@ public class LiarGame {
         if (LastPlayerCard == null)
             System.out.println("패 낸거 없음");
         else {
-            for (int i = 0 ; i < LastPlayerCard.size()-1;i++) {
+            for (int i = 0 ; i < LastPlayerCard.size();i++) {
                 LastPlayerCard.get(i).toCardString();
             }
             System.out.println();
@@ -228,10 +243,6 @@ public class LiarGame {
     }
 
     void chooseForStrike(Liars LastPlayer, Liars nowPlayer) {
-        if (LastPlayerCard == null || LastPlayerCard.isEmpty()) {
-            SP.s("이전 플레이어가 카드를 내지 않았습니다. 라이어 호출 불가.",300);
-            return;
-        }
         if (LastPlayer == this.user) {
             SP.s("결정하세요 1.넘김 2.라이어!",300);
             int choose = input.nextInt();
@@ -252,10 +263,12 @@ public class LiarGame {
         } else {
             SP.s(LastPlayer.getName() + "(이)가 고민중입니다...",1000);
             int choose = random.nextInt(100) + 1;
-            if(this.user.PlayerDeck.isEmpty() && LastPlayerCard.size()>1)
-                choose-=50;
+            if(this.LastPlayerCard.size()==3 && FieldCard.getRank().equals(mainRank) && LastPlayer.getHand().stream().anyMatch(e->e.getRank().equals(this.mainRank)))
+                choose -=90;
+            if(nowPlayer.getHand().isEmpty())
+                choose -=90;
 
-            if (choose < 50) {
+            if (choose < 40) {
                 SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
                 this.Striker = LastPlayer;
                 this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
@@ -297,13 +310,14 @@ public class LiarGame {
         this.Striker=null;
         this.loser = null;
         this.LastPlayerCard=null;
-
+        this.gamePlayed++;
         System.out.println("한판 더? y/n");
         input.nextLine();
     }
     void sayGoodBye(){
         System.out.println("다음에봐용🤣");
         System.out.println("승: "+this.winStack+" "+" 총 수입: "+this.totalStack);
+        System.out.println("승률: "+(double)this.winStack/this.gamePlayed*100+"%");
         this.winStack=0;
         this.totalStack=0;
     }
