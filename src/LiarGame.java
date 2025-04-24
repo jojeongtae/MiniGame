@@ -93,7 +93,7 @@ public class LiarGame {
     }
     void BettingStart() {
         while (true) {
-            SP.s("판돈을 입력해주세요:",500);
+            SP.s("현재 보유 금액: ("+this.user.getUserMoney()+") 판돈을 입력해주세요:",500);
             int userBet = input.nextInt();
             if (userBet > user.getUserMoney()) {
                 System.out.println("판돈이 모자랍니다.");
