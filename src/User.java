@@ -117,6 +117,7 @@ public class User implements Liars {
         showDeck();
         while (true) {
             String select = input.nextLine().trim();
+            input.nextLine();
             if (select.isEmpty()) {
                 System.out.println("입력값이 없습니다. 다시 입력해주세요.");
                 continue;
