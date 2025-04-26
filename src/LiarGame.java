@@ -17,6 +17,7 @@ public class LiarGame {
     int stake;
     int totalStack=0;
     int winStack = 0;
+    int winningStack = 0;
     int gamePlayed = 0;
     boolean isLie = false;
     Card FieldCard;
@@ -127,7 +128,7 @@ public class LiarGame {
         this.player1 = player1;
         this.player2 = player2;
 
-        if(this.totalStack>50000 || user.getUserMoney() == 0){
+        if(this.totalStack>50000 || user.getUserMoney() == 0 || this.winningStack>2){
             this.player1.setStrategy(LiarsStrategy.CHEATER);
             this.player2.setStrategy(LiarsStrategy.CHEATER);
         }
@@ -380,13 +381,16 @@ public class LiarGame {
     }
     boolean gameEndResetAll(){
         if(this.winner==this.user){
+            this.winningStack++;
             int userGetBet = this.stake*3;
             System.out.println("게임 승리로 "+userGetBet+"원을 획득했습니다!");
             this.user.getBet(this.user.getUserMoney()+userGetBet);
             this.totalStack+=userGetBet;
             System.out.println("현재 보유 금액: "+this.user.getUserMoney()+"원 ");
-        }else
-            System.out.println("현재 보유 금액: "+this.user.getUserMoney()+"원 ");
+        }else {
+            this.winningStack=0;
+            System.out.println("현재 보유 금액: " + this.user.getUserMoney() + "원 ");
+        }
         this.stake=0;
         this.user.getHand().clear();
         this.winner=null;
