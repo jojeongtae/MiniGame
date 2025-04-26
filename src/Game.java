@@ -12,6 +12,11 @@ public class Game {
 
     public void run() {
         while (true) {
+            System.out.println("""
+                    ID:aaa pw:123 userName:first
+                    ID:bbb pw:123 userName:second
+                    ID:ccc pw:123 userName:third
+                    """);
             System.out.print("사용하실 아이디를 입력해주세요: ");
             String inputId = input.nextLine();
             System.out.print("사용하실 비번를 입력해주세요: ");
