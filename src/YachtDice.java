@@ -33,8 +33,11 @@ public class YachtDice {
         while (count < 13) {
             if (turn == 1) {
                 playerTurn();
-            } else {
+                continue;
+
+            } else if (turn == 2) {
                 computerTurn();
+
             }
             count++;
         }
@@ -128,11 +131,13 @@ public class YachtDice {
     public void playerTurn() {
         int num = 0;
         int total = 0;
+        for (int i = 0; i < 5; i++) {
+            dice[i].notHold();
+        }
         while (num < 3) {
             for (Dice d : dice) {
                 d.diceRoll();
             }
-
             System.out.println("던진 주사위 결과");
             for (int i = 0; i < dice.length; i++) {
                 System.out.print((1 + i) + "번째 주사위 : " + dice[i] + " || ");
@@ -164,8 +169,76 @@ public class YachtDice {
 
 
     public void computerTurn() {
-
+        DicePlayer com = this.computer;
+        System.out.println(com.getName() + "님의 턴이 시작 하였습니다.");
+        for (int i = 0; i < 5; i++) {
+            dice[i].notHold();
+        }
+        for (int j = 0; j < 3; j++) {
+            for (Dice d : dice) {
+                d.diceRoll();
+            }
+            if (j == 0) {
+                holdHighNumber();
+            }
+        }
+        computerHighNumber();
+        updateSubtotalAndTotal(computer);
+        for (Dice d : dice) {
+            System.out.print(computer.getName() + "님의 주사위 : " + d.getValue() +" || ");
+        }
+        System.out.println();
+        System.out.println(scoreBoard(player, computer));
+        this.turn = 1;
     }
+
+    public void computerHighNumber() {
+        if (!computer.isUsed(11) && isYacht()) {
+            computer.setScore(11, 50);
+            System.out.println(computer.getName() + "님 야추! 50점이 기록되었습니다.");
+        } else if (!computer.isUsed(10) && isLargeStraight()) {
+            computer.setScore(10, 30);
+            System.out.println(computer.getName() + "님 LS 30점이 기록되었습니다.");
+        } else if (!computer.isUsed(9) && isSmallStraight()) {
+            computer.setScore(9, 15);
+            System.out.println(computer.getName() + "님 SS 15점이 기록되었습니다.");
+        } else if (!computer.isUsed(8) && fullHouseScore() > 0) {
+            computer.setScore(8, fullHouseScore());
+            System.out.println(computer.getName() + "님 FullHouse 점이 기록되었습니다.");
+        } else if (!computer.isUsed(7) && sumIfOfAKind(4) > 0) {
+            computer.setScore(7, sumIfOfAKind(4));
+            System.out.println(computer.getName() + "님 4 Of Kind 점이 기록되었습니다.");
+        } else {
+            int max = 0, maxIndex = -1;
+            for (int i = 0; i <= 5; i++) {
+                if (!computer.isUsed(i)) {
+                    int temp = getSumOf(i + 1);
+                    if (temp > max) {
+                        max = temp;
+                        maxIndex = i;
+                    }
+                }
+            }
+            if (maxIndex != -1) {
+                computer.setScore(maxIndex, max);
+                System.out.println(computer.getName() + "님 " + (maxIndex + 1) + " 숫자에 " + max + "점 기록.");
+            } else {
+                System.out.println("모든 숫자 칸이 이미 사용되었습니다.");
+            }
+
+        }
+    }
+
+    public int getSumOf(int num) {
+        int sum = 0;
+        for (Dice d : dice) {
+            if (d.getValue() == num) {
+                sum += num;
+            }
+        }
+        return sum;
+    }
+
 
     public void holdDice() {
         System.out.println("고정 하실 주사위 위치를 입력하세요(예: 1 3) 그냥 넘어가면 Enter 눌러주세요");
@@ -199,7 +272,7 @@ public class YachtDice {
         System.out.println("점수판에서 점수를 넣을곳을 앞에 두글자나 풀네임 써주세요 예시(ACE = AC / L.STRAIGHT = L.)");
         String select = input.nextLine().toUpperCase();
 
-
+        //점수판 입력
         switch (select) {
             case "AC":
             case "ACE": {
@@ -284,9 +357,10 @@ public class YachtDice {
             case "LS":
             case "LARGE":
             case "L.STRAIGHT":
-                if (isLargeStraight()){
-                player.setScore(10, 30);
-                };
+                if (isLargeStraight()) {
+                    player.setScore(10, 30);
+                }
+                ;
                 break;
 
             case "YA":
@@ -308,17 +382,18 @@ public class YachtDice {
 
         // 점수판 출력
         System.out.println(scoreBoard(player, computer));
+        this.turn = 2;
     }
 
     public int sumIfOfAKind(int count) {
         int[] diceCount = new int[7];
-        for (Dice d : dice){
+        for (Dice d : dice) {
             diceCount[d.getValue()]++;
         }
-        for (int i = 1; i <= 6 ; i++) {
-            if (diceCount[i] >= count){
+        for (int i = 1; i <= 6; i++) {
+            if (diceCount[i] >= count) {
                 int sum = 0;
-                for (Dice d : dice){
+                for (Dice d : dice) {
                     sum += d.getValue();
                 }
                 return sum;
@@ -326,54 +401,86 @@ public class YachtDice {
         }
         return 0;
     }
-    public int fullHouseScore(){
+
+    public int fullHouseScore() {
         int[] diceCount = new int[7];
-        for (Dice d : dice){
+        for (Dice d : dice) {
             diceCount[d.getValue()]++;
         }
         boolean three = false;
         boolean two = false;
-        for (int i =1 ; i<=6 ; i++){
-            if (diceCount[i] == 3) {three = true;}
-            if (diceCount[i] == 2) {two = true;}
+        for (int i = 1; i <= 6; i++) {
+            if (diceCount[i] == 3) {
+                three = true;
+            }
+            if (diceCount[i] == 2) {
+                two = true;
+            }
         }
-        if (three && two){
+        if (three && two) {
             int sum = 0;
-            for (Dice d : dice){
+            for (Dice d : dice) {
                 sum += d.getValue();
             }
             return sum;
         }
         return 0;
     }
-    public boolean isSmallStraight(){
+
+    public boolean isSmallStraight() {
         boolean[] value = new boolean[7];
-        for (Dice d : dice){
-            value[d.getValue()]= true;
+        for (Dice d : dice) {
+            value[d.getValue()] = true;
         }
-        return (value[1] &&value[2]&&value[3]&&value[4] || value[2]&&value[3]&&value[4]&&value[5]|| value[3]&&value[4]&&value[5]&&value[6]);
+        return (value[1] && value[2] && value[3] && value[4] || value[2] && value[3] && value[4] && value[5] || value[3] && value[4] && value[5] && value[6]);
     }
-    public boolean isLargeStraight(){
+
+    public boolean isLargeStraight() {
         boolean[] value = new boolean[7];
-        for (Dice d : dice){
-            value[d.getValue()]= true;
+        for (Dice d : dice) {
+            value[d.getValue()] = true;
         }
-        return (value[1] &&value[2]&&value[3]&&value[4]&&value[5] || value[2]&&value[3]&&value[4]&&value[5]&&value[6]);
+        return (value[1] && value[2] && value[3] && value[4] && value[5] || value[2] && value[3] && value[4] && value[5] && value[6]);
     }
-    public boolean isYacht(){
+
+    public boolean isYacht() {
         int value = dice[0].getValue();
-        for (Dice d: dice){
+        for (Dice d : dice) {
             if (d.getValue() != value) {
                 return false;
             }
         }
         return true;
     }
-    public void updateSubtotalAndTotal(DicePlayer player){
+
+    public void updateSubtotalAndTotal(DicePlayer player) {
         int subTotal = player.getSubtotal();
-        player.setScore(12,subTotal);
+        player.setScore(12, subTotal);
         int total = player.getTotalScore();
-        player.setScore(13,total);
+        player.setScore(13, total);
+    }
+
+    public void holdHighNumber() {
+        int[] counts = new int[7]; // 주사위 값 1~6 카운트
+
+        for (Dice d : dice) {
+            counts[d.getValue()]++;
+        }
+
+        int mostFreq = 1;
+        for (int i = 2; i <= 6; i++) {
+            if (counts[i] > counts[mostFreq]) {
+                mostFreq = i;
+            }
+        }
+
+        for (Dice d : dice) {
+            if (d.getValue() == mostFreq) {
+                d.hold(); // 가장 많이 나온 숫자들만 고정
+            }
+        }
+
+        System.out.println("컴퓨터가 " + mostFreq + " 고정함 (x" + counts[mostFreq] + ")");
     }
 
 }
