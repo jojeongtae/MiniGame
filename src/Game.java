@@ -39,7 +39,7 @@ public class Game {
 
     public void selectGame(User login) {
         while (true) {
-            System.out.print("(1)블랙잭,(2)홀덤 (3)라이어게임 ");
+            System.out.print("(1)블랙잭,(2)야추 다이스 (3)라이어게임 ");
             int select = input.nextInt();
             switch (select) {
                 case 1:
@@ -47,6 +47,8 @@ public class Game {
                     game.start();
                     break;
                 case 2:
+                    YachtDice game2 = new YachtDice(login);
+                    game2.start();
                     break;
                 case 3:
                     LiarGame game3 = new LiarGame(login);
