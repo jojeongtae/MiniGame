@@ -11,6 +11,8 @@ public class User implements Liars {
     ArrayList<Card> PlayerDeck = new ArrayList<>();
     Scanner input = new Scanner(System.in);
     LiarsStrategy strategy;
+
+
     public User(String id, String pw, String userName, int userMoney) {
         this.id = id;
         this.pw = pw;
@@ -124,4 +126,5 @@ public class User implements Liars {
     public LiarsStrategy getStrategy(){
         return null;
     }
+
 }

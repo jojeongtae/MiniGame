@@ -19,6 +19,7 @@ public class BlackJack {
             BetAmount bet = new BetAmount(user);
             int count = 0;
             System.out.println("블랙잭 게임을 시작 하겠습니다.");
+            ruleText();
             System.out.print("판돈을 입력해주세요 : ");
             int stake = 0; //판 돈
             stake = input.nextInt();
@@ -190,5 +191,16 @@ public class BlackJack {
     private void splitCard(Card card) {
         savedCards.add(card); //위에 스플릿한 카드를 여기로 넘겨받음
         System.out.println("넘김 받은 카드 : " + card);
+    }
+    private void ruleText(){
+        System.out.println("""
+                유저와 컴퓨터와 서로 각자 패에 보유하고있는 카드로
+                점수를 비교합니다. 점수가 더 낮은 사람이 패배하게 됩니다.
+                A카드와 (K,Q,J,10)(이)가 나오면 블랙잭으로 판돈에 3배로 드립니다.
+                Hit은 카드한장을 먹습니다.
+                DoubleDown은 카드 한장을 강제로 먹고 판돈을 한번 더 걸고 승리시 4배로 먹습니다.
+                Split은 카드 한장을 다음판으로 넘깁니다. 판돈과 배율은 그대로입니다.
+                Stand는 행동을 취하지 않고 차례를 넘깁니다.
+                """);
     }
 }

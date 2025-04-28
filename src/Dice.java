@@ -20,4 +20,7 @@ public class Dice {
         // 고정된 주사위는 [숫자], 안 고정은 그냥 숫자
         return flag ? "[" + dice + "]" : String.valueOf(dice);
     }
+    public int getValue(){
+        return this.dice;
+    }
 }
