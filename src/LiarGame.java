@@ -64,11 +64,6 @@ public class LiarGame {
 
 
 
-
-
-
-
-
     void showInfo(){
         SP.s("""
                 라이어 게임을 시작하겠습니다

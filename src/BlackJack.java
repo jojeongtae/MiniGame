@@ -82,7 +82,7 @@ public class BlackJack {
                         count++;
                     } else {
                         break;
-                    }
+                    } 
                 }
                 System.out.println("딜러 차례...");
                 while (totalHand(dealerCard) < 17) {
