@@ -17,6 +17,7 @@ public class LiarGame {
     int stake;
     int totalStack=0;
     int winStack = 0;
+    int winningStack = 0;
     int gamePlayed = 0;
     boolean isLie = false;
     Card FieldCard;
@@ -29,6 +30,10 @@ public class LiarGame {
     }
 
     void start() {
+            if(this.user.getUserMoney()==0){
+                System.out.println("돈이없어 참가가 불가능합니다");
+                return;
+            }
 
 
 
@@ -47,16 +52,8 @@ public class LiarGame {
 
             startPlaying();
 
-            gameEndResetAll();
 
-            String YorN = input.nextLine();
-
-            if(YorN.equalsIgnoreCase("n")){
-                sayGoodBye();
-                break;
-            }
-
-        }while(true);
+        } while (!gameEndResetAll());
 
 
     }
@@ -70,12 +67,14 @@ public class LiarGame {
                 
                 😍규칙😍
                 
+                A, K, Q 중 랜덤으로 랭크 하나가 제시됩니다
+                
                 승리조건은 자신의 모든 패를 제출. 혹은 상대방의 거짓말을 간파
                 
-                같은 랭크의 카드를 3장까지 동시에 낼수 있습니다.
-                혹은 서로 다른 랭크의 카드도 제출 가능하나 상대방이 라이어를 외친다면 패배!
+                같거나 다른 랭크의 카드를 3장까지 동시에 낼수 있습니다.
+                제시랭크와 다른 랭크의 카드도 제출 가능하나 상대방이 라이어를 외친다면 패배!
                 
-                조커의 경우, 제출할 때 어떤 랭크든 같은 랭크로 취급됩니다
+                조커의 경우, 제출할 때 제시 랭크와 같은 랭크로 취급됩니다
                 
                 순서는 매 판 랜덤으로 결정됩니다
                 
@@ -83,12 +82,20 @@ public class LiarGame {
                 
                 
                 """,500);
+        SP.s("주의. 올인은 패망으로 가는 지름길 입니다 👿",1000);
     }
     void BettingStart() {
         while (true) {
             SP.s("현재 보유 금액: ("+this.user.getUserMoney()+") 판돈을 입력해주세요:",500);
-            int userBet = input.nextInt();
-            if (userBet > user.getUserMoney()) {
+            int userBet=0;
+            try {
+                userBet = input.nextInt();
+            }catch (Exception e){
+                System.out.println("숫자를 입력하세요");
+                input.nextLine();
+                continue;
+            }
+            if (userBet > user.getUserMoney() || userBet ==0) {
                 System.out.println("판돈이 모자랍니다.");
             } else {
                 SP.s(userBet + "원을 배팅합니다. 승리 시 " + userBet * 3 + "원 획득!",500);
@@ -115,6 +122,11 @@ public class LiarGame {
         }
         this.player1 = player1;
         this.player2 = player2;
+
+        if(this.totalStack>50000 || user.getUserMoney() == 0 || this.winningStack>2){
+            this.player1.setStrategy(LiarsStrategy.CHEATER);
+            this.player2.setStrategy(LiarsStrategy.CHEATER);
+        }
         SP.s(player1.name + "(이)가 게임에 참가했습니다.",300);
        SP.s(player2.name + "(이)가 게임에 참가했습니다.",300);
     }
@@ -238,7 +250,16 @@ public class LiarGame {
     void chooseForStrike(Liars LastPlayer, Liars nowPlayer) {
         if (LastPlayer == this.user) {
             SP.s("결정하세요 1.넘김 2.라이어!",300);
-            int choose = input.nextInt();
+            int choose =0;
+            while (true) {
+                try {
+                    choose = input.nextInt();
+                    break;
+                } catch (Exception e) {
+                    System.out.println("숫자를 입력해주세요");
+                    input.nextLine();
+                }
+            }
             if (choose == 2) {
                 this.Striker = LastPlayer;
                 this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
@@ -255,27 +276,92 @@ public class LiarGame {
             }
         } else {
             SP.s(LastPlayer.getName() + "(이)가 고민중입니다...",1000);
-            int choose = random.nextInt(100) + 1;
-            if(this.LastPlayerCard.size()==3 && FieldCard.getRank().equals(mainRank) && LastPlayer.getHand().stream().anyMatch(e->e.getRank().equals(this.mainRank)))
-                choose -=90;
-            if(nowPlayer.getHand().isEmpty())
-                choose -=90;
+            switch (LastPlayer.getStrategy()){
+                case RANDOM :
+                    int choose = random.nextInt(100) + 1;
+                    if(nowPlayer.getHand().isEmpty())
+                        choose -=90;
 
-            if (choose < 40) {
-                SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
-                this.Striker = LastPlayer;
-                this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
-                showLastPlayerCard();
-                if (isLie) {
-                    SP.s(nowPlayer.getName()+"(은)는 라이어 였습니다!",300);
-                    this.winner = LastPlayer;
-                    this.loser = nowPlayer;
-                } else {
-                    SP.s(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!",300);
-                    this.loser = LastPlayer;
-                    this.winner = nowPlayer;
-                }
-            } else SP.s(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다",800);
+                    if (choose < 51) {
+                        SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
+                        this.Striker = LastPlayer;
+                        this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
+                        showLastPlayerCard();
+                        if (isLie) {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어 였습니다!",300);
+                            this.winner = LastPlayer;
+                            this.loser = nowPlayer;
+                        } else {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!",300);
+                            this.loser = LastPlayer;
+                            this.winner = nowPlayer;
+                        }
+                    } else SP.s(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다",800);
+                    break;
+                case DEFENSIVE:
+                   choose = random.nextInt(100) + 1;
+                    if(nowPlayer.getHand().isEmpty())
+                        choose -=90;
+
+                    if (choose < 15) {
+                        SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
+                        this.Striker = LastPlayer;
+                        this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
+                        showLastPlayerCard();
+                        if (isLie) {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어 였습니다!",300);
+                            this.winner = LastPlayer;
+                            this.loser = nowPlayer;
+                        } else {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!",300);
+                            this.loser = LastPlayer;
+                            this.winner = nowPlayer;
+                        }
+                    } else SP.s(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다",800);
+                    break;
+                case AGGRESSIVE:
+                    choose = random.nextInt(100) + 1;
+                    if(this.LastPlayerCard.size()==3 && LastPlayer.getHand().stream().anyMatch(e->e.getRank().equals(this.mainRank)))
+                        choose -=90;
+                    if(nowPlayer.getHand().isEmpty())
+                        choose -=90;
+
+                    if (choose < 20) {
+                        SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
+                        this.Striker = LastPlayer;
+                        this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
+                        showLastPlayerCard();
+                        if (isLie) {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어 였습니다!",300);
+                            this.winner = LastPlayer;
+                            this.loser = nowPlayer;
+                        } else {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!",300);
+                            this.loser = LastPlayer;
+                            this.winner = nowPlayer;
+                        }
+                    } else SP.s(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다",800);
+                    break;
+                case CHEATER:
+                    if(this.LastPlayerCard.stream().
+                            noneMatch(e->e.getRank().equals(this.mainRank) || e.getRank().equals("Joker"))){
+                        SP.s(LastPlayer.getName()+"(이)가 "+nowPlayer.getName() + "에게 라이어 선언! 너 그짓말이지",1200);
+                        this.Striker = LastPlayer;
+                        this.isLie = LastPlayer.StrikeLiar(this.LastPlayerCard);
+                        showLastPlayerCard();
+                        if (isLie) {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어 였습니다!",300);
+                            this.winner = LastPlayer;
+                            this.loser = nowPlayer;
+                        } else {
+                            SP.s(nowPlayer.getName()+"(은)는 라이어가 아니였습니다!",300);
+                            this.loser = LastPlayer;
+                            this.winner = nowPlayer;
+                        }
+                    }else SP.s(LastPlayer.getName()+"(은)는 라이어선언을 참았습니다",800);
+                    break;
+            }
+
         }
     }
 
@@ -288,15 +374,18 @@ public class LiarGame {
         }
         return false;
     }
-    void gameEndResetAll(){
+    boolean gameEndResetAll(){
         if(this.winner==this.user){
+            this.winningStack++;
             int userGetBet = this.stake*3;
             System.out.println("게임 승리로 "+userGetBet+"원을 획득했습니다!");
             this.user.getBet(this.user.getUserMoney()+userGetBet);
             this.totalStack+=userGetBet;
             System.out.println("현재 보유 금액: "+this.user.getUserMoney()+"원 ");
-        }else
-            System.out.println("현재 보유 금액: "+this.user.getUserMoney()+"원 ");
+        }else {
+            this.winningStack=0;
+            System.out.println("현재 보유 금액: " + this.user.getUserMoney() + "원 ");
+        }
         this.stake=0;
         this.user.getHand().clear();
         this.winner=null;
@@ -304,8 +393,22 @@ public class LiarGame {
         this.loser = null;
         this.LastPlayerCard=null;
         this.gamePlayed++;
+        if(user.getUserMoney()==0) {
+            System.out.println("돈이없네요 나가쇼💩");
+            System.exit(0);
+        }
+        System.out.println();
         System.out.println("한판 더? y/n");
         input.nextLine();
+        String YorN = input.nextLine();
+        if (YorN.equalsIgnoreCase("n")) {
+            sayGoodBye();
+            return true;
+        } else {
+            SP.s("새로운 게임을 시작합니다!", 300);
+            return false;
+        }
+
     }
     void sayGoodBye(){
         System.out.println("다음에봐용🤣");
