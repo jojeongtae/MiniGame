@@ -23,4 +23,7 @@ public class Dice {
     public int getValue(){
         return this.dice;
     }
+    public boolean isHold() {   //  고정 여부 확인용
+        return flag;
+    }
 }
