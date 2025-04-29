@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class DicePlayer {
     private String name;
     private boolean isComputer;
@@ -5,9 +7,13 @@ public class DicePlayer {
     private boolean[] used = new boolean[14]; // 해당 칸 사용 여부
     public static final int TOTAL_INDEX = 13;
     public static final int SUBTOTAL_INDEX = 12;
+
+
     public DicePlayer(String name, boolean isComputer) {
+        Arrays.fill(used, false);
         this.name = name;
         this.isComputer = isComputer;
+
     }
 
     public String getName() {
@@ -19,14 +25,19 @@ public class DicePlayer {
     }
 
     public void setScore(int index, int score) {
+
+        if (index == SUBTOTAL_INDEX || index == TOTAL_INDEX) {
+            scores[index] = score;
+            return;
+        }
         if (used[index]) {
-            if (index != 12 && index != 11) {
-                System.out.println(index + "번 칸은 이미 사용되었습니다.");
-            }
-        } else {
+            System.out.println("이미 사용 됨");
+            return;
+        }
             scores[index] = score;
             used[index] = true;
-        }
+
+
     }
 
     public int getScore(int index) {
@@ -54,9 +65,10 @@ public class DicePlayer {
 
     public int getTotalScore() {
         int sum = 0;
-        for (int i = 0; i < SUBTOTAL_INDEX; i++) {
+        for (int i = 6; i < SUBTOTAL_INDEX; i++) {
             sum += scores[i];
         }
+        sum += getSubtotal();
         return sum;
     }
 }
