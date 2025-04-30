@@ -20,18 +20,18 @@ public class YachtDice {
             computer = new DicePlayer("컴퓨터", true);
             this.dice = new Dice[5];
             for (int i = 0; i < dice.length; i++) {
-                dice[i] = new Dice(); // ✅ 각 주사위 객체 생성
+                dice[i] = new Dice(); //  각 주사위 객체 생성
             }
             introText();
             System.out.print("베팅금액을 입력해주세요 : ");
             int stake = input.nextInt();
             input.nextLine();
             if (user.getUserMoney() < stake) {
-                System.out.println("돈이 없노");
+                SP.s("거렁뱅이 컷",200);
                 return;
             }
             turnSelect();
-            System.out.println("처음 점수판입니다.");
+            SP.s("처음 점수판입니다.",800);
             System.out.println(scoreBoard(player, computer));
             while (playerCount < 12 || computerCount < 12) {
                 if (turn == 1) {
@@ -43,16 +43,16 @@ public class YachtDice {
                 }
 
             }
-            System.out.println("최종 점수판 입니다 \n" + scoreBoard(player, computer));
+            SP.s("최종 점수판 입니다 \n" + scoreBoard(player, computer),500);
             if (player.getTotalScore() > computer.getTotalScore()) {
-                System.out.println("승리 하였습니다!");
+                SP.s("승리 하였습니다!",1000);
                 user.addUserMoney(stake * 2);
             } else if (player.getTotalScore() == computer.getTotalScore()) {
                 System.out.println("무승부!");
             } else if (player.getTotalScore() < computer.getTotalScore()) {
-                System.out.println(computer.getName() + "님이 말합니다. EASY");
+                SP.s(computer.getName() + "님이 말합니다. EASY",1000);
             }
-            System.out.println(user.getUserMoney() + "만큼 잔액이 있습니다.");
+            SP.s(user.getUserMoney() + "만큼 잔액이 있습니다.",500);
             System.out.println("한판 더 하시겠습니까? Y/N");
             String yn = input.nextLine();
             if (!yn.toUpperCase().equals("Y")) {
@@ -73,7 +73,7 @@ public class YachtDice {
                 주사위를 굴려 족보에 일치하는곳에 입력하면됩니다!
                 
                  \s""";
-        System.out.println(intro);
+        SP.s(intro,600);
     }
 
     public String scoreBoard(DicePlayer player, DicePlayer computer) {
@@ -86,7 +86,7 @@ public class YachtDice {
                         DEUCES     :    %2d    /   %2d
                         THREES     :    %2d    /   %2d
                         FOURS      :    %2d    /   %2d
-                        FIVES       :    %2d    /   %2d
+                        FIVES      :    %2d    /   %2d
                         SIXES      :    %2d    /   %2d
                         SUBTOTAL   :  %2d/63   / %2d/63
                         ---------------------------------
@@ -149,7 +149,7 @@ public class YachtDice {
 
     public void playerTurn() {
         int num = 0;
-        int total = 0;
+//        int total = 0;
         for (int i = 0; i < 5; i++) {
             dice[i].notHold();
         }
@@ -161,7 +161,7 @@ public class YachtDice {
             for (int i = 0; i < dice.length; i++) {
                 System.out.print((1 + i) + "번째 주사위 : " + dice[i] + " || ");
             }
-            System.out.println();
+            SP.s(" ",400);
             if (num == 2) {
                 break;
             }
@@ -180,12 +180,12 @@ public class YachtDice {
             }
         }
         if (num == 2) {
-            System.out.println("주사위 최종 결과를 알려 드립니다 ");
-            for (int i = 0; i < 5; i++) {
-                total += dice[i].getValue();
-                System.out.print((1 + i) + "번째 주사위 : " + dice[i] + " || ");
-            }
-            System.out.println();
+//            System.out.println("주사위 최종 결과를 알려 드립니다 ");
+//            for (int i = 0; i < 5; i++) {
+//                total += dice[i].getValue();
+//                System.out.print((1 + i) + "번째 주사위 : " + dice[i] + " || ");
+//            }
+            SP.s(" ",600);
             scoreBoardSelect(player);
             // 점수판 출력
             System.out.println(scoreBoard(player, computer));
@@ -197,7 +197,8 @@ public class YachtDice {
 
     public void computerTurn() {
         DicePlayer com = this.computer;
-        System.out.println(com.getName() + "님의 턴이 시작 하였습니다.");
+        SP.s(com.getName() + "님의 턴이 시작 하였습니다.",500);
+
         for (int i = 0; i < 5; i++) {
             dice[i].notHold();
         }
@@ -243,7 +244,7 @@ public class YachtDice {
 
         if (!computer.isUsed(11) && isYacht()) {
             computer.setScore(11, 50);
-            System.out.println(computer.getName() + "님 야추! 50점이 기록되었습니다.");
+            SP.s(computer.getName() + "님 야추! 50점이 기록되었습니다.",400);
             return;
         }
 
@@ -254,47 +255,55 @@ public class YachtDice {
                 int score = i * count[i];
                 computer.setScore(index, score);
                 updateSubtotalAndTotal(computer);
-                System.out.println(computer.getName() + "님 " + (index + 1) + " 숫자에 " + score + "점 기록.");
+                SP.s(computer.getName() + "님 " + (index + 1) + " 숫자에 " + score + "점 기록.",300);
                 return;
             }
         }
 
         if (!computer.isUsed(10) && isLargeStraight()) {
             computer.setScore(10, 30);
-            System.out.println(computer.getName() + "님 LS 30점이 기록되었습니다.");
+            SP.s(computer.getName() + "님 LS 30점이 기록되었습니다.",500);
             return;
         }
 
         if (!computer.isUsed(9) && isSmallStraight()) {
             computer.setScore(9, 15);
-            System.out.println(computer.getName() + "님 SS 15점이 기록되었습니다.");
+            SP.s(computer.getName() + "님 SS 15점이 기록되었습니다.",500);
             return;
         }
 
         if (!computer.isUsed(8) && fullHouseScore() > 0) {
             computer.setScore(8, fullHouseScore());
-            System.out.println(computer.getName() + "님 FullHouse 점이 기록되었습니다.");
+            SP.s(computer.getName() + "님 FullHouse 점이 기록되었습니다.",500);
             return;
         }
 
         if (!computer.isUsed(7) && sumIfOfAKind(4) > 0) {
             computer.setScore(7, sumIfOfAKind(4));
-            System.out.println(computer.getName() + "님 4 Of Kind 점이 기록되었습니다.");
+            SP.s(computer.getName() + "님 4 Of Kind 점이 기록되었습니다.",500);
             return;
         }
 
         //  CHOICE나 ACE에 전략적으로 넣기
         int sum = 0;
+        int aceSum = 0;
+
         for (Dice d : dice) sum += d.getValue();
 
-        if (!computer.isUsed(6)) {
+        if (!computer.isUsed(6) && sum > 20) {
             computer.setScore(6, sum);
-            System.out.println("컴퓨터 CHOICE로 " + sum + "점 기록");
+            SP.s("컴퓨터 CHOICE로 " + sum + "점 기록",500);
             return;
         }
-            if (!computer.isUsed(0) && sum <18) {
-                computer.setScore(0, 0);
-                System.out.println(computer.getName() + "님이 전략적으로 ACE에 0점 넣었습니다.");
+
+            if (!computer.isUsed(0) && sum <20) {
+                for (Dice d : dice){
+                    if (d.getValue() == 1){
+                        aceSum += d.getValue();
+                        computer.setScore(0, aceSum);
+                    }
+                }
+                SP.s(computer.getName() + "님이 전략적으로 ACE에 "+ aceSum + "점 넣었습니다.",500);
                 return;
             }
 
@@ -313,20 +322,20 @@ public class YachtDice {
 
             if (maxIndex != -1) {
                 computer.setScore(maxIndex, max);
-                System.out.println(computer.getName() + "님 " + (maxIndex + 1) + " 숫자에 " + max + "점 기록.");
+                SP.s(computer.getName() + "님 " + (maxIndex + 1) + " 숫자에 " + max + "점 기록.",500);
                 return;
             }
         }
 
-        System.out.println("모든 조건 실패. 가능한 칸에 점수 계산 후 입력 시도");
+        SP.s("모든 조건 실패. 가능한 칸에 점수 계산 후 입력 시도",500);
 
-        int[] preferredOrder = {0, 6, 11, 1, 2, 6, 5, 4, 3, 7, 9, 10, 8}; // 야추→LS→SS→풀하우스→...
+        int[] preferredOrder = {0, 6, 11, 1, 2, 6, 5, 4, 3, 7, 9, 10, 8};
 
         for (int index : preferredOrder) {
             if (!computer.isUsed(index)) {
                 int score = calculateScore(index);
                 computer.setScore(index, score);
-                System.out.println(computer.getName()+ "님이 "+ getScoreName(index) + " 칸에 " + score + "점 기록.");
+                SP.s(computer.getName()+ "님이 "+ getScoreName(index) + " 칸에 " + score + "점 기록.",500);
                 return;
             }
         }
@@ -396,7 +405,7 @@ public class YachtDice {
 
 
     public void holdDice() {
-        System.out.println("고정 하실 주사위 위치를 입력하세요(예: 1 3) 그냥 넘어가면 Enter 눌러주세요");
+        SP.s("고정 하실 주사위 위치를 입력하세요(예: 1 3) 그냥 넘어가면 Enter 눌러주세요",500);
         String holdDice = input.nextLine().trim();
         if (!holdDice.isEmpty()) {
             String[] select = holdDice.split(" ");
@@ -425,7 +434,7 @@ public class YachtDice {
 
     public void scoreBoardSelect(DicePlayer player) {
         while (true) {
-            System.out.println("점수판에서 점수를 넣을곳을 앞에 두글자나 풀네임 써주세요 예시(ACE = AC / L.STRAIGHT = L.)");
+            SP.s("점수판에서 점수를 넣을곳을 앞에 두글자나 풀네임 써주세요 예시(ACE = AC / L.STRAIGHT = Ls)",500);
             String select = input.nextLine().toUpperCase();
             int score = 0;
             int index = -1;
@@ -616,7 +625,7 @@ public class YachtDice {
                     d.hold();
                 }
             }
-            System.out.println("컴퓨터가 " + bestNumber + " (x" + bestCount + ") 고정함 (야추/4Kind/풀하우스 노림)");
+            SP.s("컴퓨터가 " + bestNumber + " (x" + bestCount + ") 고정함 (야추/4Kind/풀하우스 노림)",400);
         } else {
             System.out.println("고정할 숫자가 없습니다 (3개 이상 없음)");
         }
