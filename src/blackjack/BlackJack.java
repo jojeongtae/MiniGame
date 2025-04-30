@@ -1,7 +1,11 @@
+package blackjack;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
+import common.User;
+import common.Card;
+import common.Deck;
 public class BlackJack {
     private Deck deck;
     private User user;
@@ -13,6 +17,8 @@ public class BlackJack {
     public BlackJack(User user) {
         this.user = user;
     }
+
+
 
     public void start() {
         while (true) {

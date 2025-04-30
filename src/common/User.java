@@ -1,14 +1,18 @@
+package common;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
+import liarsbar.LiarsStrategy;
+import liarsbar.Liars;
 
 public class User implements Liars {
     private String id;
     private String pw;
     private String userName;
     private int userMoney;
-    String mainRank;
-    ArrayList<Card> PlayerDeck = new ArrayList<>();
+    public String mainRank;
+    public ArrayList<Card> PlayerDeck = new ArrayList<>();
     Scanner input = new Scanner(System.in);
     LiarsStrategy strategy;
 

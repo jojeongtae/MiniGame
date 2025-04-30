@@ -1,3 +1,6 @@
+package blackjack;
+
+import common.User;
 public class BetAmount {
      User user;
     public BetAmount(User user){

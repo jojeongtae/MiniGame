@@ -1,3 +1,5 @@
+package yacht;
+
 import java.util.Arrays;
 
 public class DicePlayer {

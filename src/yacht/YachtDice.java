@@ -1,3 +1,7 @@
+package yacht;
+
+import common.User;
+import common.SP;
 import java.util.Scanner;
 
 public class YachtDice {

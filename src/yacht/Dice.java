@@ -1,3 +1,5 @@
+package yacht;
+
 public class Dice {
     private int dice;
     private boolean flag;

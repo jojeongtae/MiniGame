@@ -1,3 +1,5 @@
+package common;
+
 public class SP {
     public static void s(String message, long delay) {
         System.out.println(message);
