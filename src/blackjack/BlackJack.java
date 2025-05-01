@@ -13,7 +13,9 @@ public class BlackJack {
     private List<Card> dealerCard;
     private Scanner input = new Scanner(System.in);
     private List<Card> savedCards = new ArrayList<>();
-
+    int winCount = 0;
+    int loseCount = 0;
+    int drawCount = 0;
     public BlackJack(User user) {
         this.user = user;
     }
@@ -22,6 +24,7 @@ public class BlackJack {
 
     public void start() {
         while (true) {
+
             BetAmount bet = new BetAmount(user);
             int count = 0;
             System.out.println("블랙잭 게임을 시작 하겠습니다.");
@@ -107,6 +110,7 @@ public class BlackJack {
 
                     if (dealerTotal > 21 || playerTotal > dealerTotal) {
                         System.out.println("당신의 승리!");
+                        winCount++;
                         if (count == 2) { //위에 더블다운은 카운트2로 해놨는데 판돈 계산때매 체크
                             bet.doubleDown(stake);
                         } else if (count == 1) { //스플릿하면 그냥 판돈 2배 기존보상이랑 동일
@@ -120,15 +124,18 @@ public class BlackJack {
                         }
                         System.out.println("남은 금액 : " + user.getUserMoney());
                     } else if (playerTotal < dealerTotal) {
+                        loseCount++;
                         System.out.println("딜러의 승리!"); //딜러 승리시 판돈을 내 돈에서 차감 이건 위에서 차감했기에 없음 그런거
                         System.out.println("남은 금액 : " + user.getUserMoney());
                     } else {
+                        drawCount++;
                         System.out.println("무승부!");
                         user.addUserMoney(stake); //무승부 시 판돈 돌려줌
                         System.out.println("남은 금액 : " + user.getUserMoney());
 
                     }
                 } else {
+                    loseCount++;
                     System.out.println("버스트! 당신의 패배");
                     System.out.println("내 패 : " + myHand(playerCard) + " 내 점수 : " + playerTotal);
                     System.out.println("딜러 패 : " + myHand(dealerCard) + " 딜러 점수: " + dealerTotal);
@@ -138,7 +145,9 @@ public class BlackJack {
                     System.out.println(" 어이 " + user.getName() + " 돈없으면 나가쇼");
                     break;
                 }
-                System.out.println("다시 하시려면 Y");
+                double totalCount = winCount+loseCount+drawCount;
+                System.out.println("다시 하시려면 Y ");
+                System.out.println("총 횟수 "+totalCount+" 승률 : " + (winCount/totalCount)*100 + "%" + " 승리 횟수 : " + winCount);
                 System.out.println("그만하시면 아무키나 눌러주세요");
                 String restart = input.nextLine();
                 if (!restart.toUpperCase().equals("Y")) {
